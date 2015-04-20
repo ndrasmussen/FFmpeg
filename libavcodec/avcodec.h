@@ -672,6 +672,7 @@ enum AVCodecID {
     AV_CODEC_ID_IDF,
     AV_CODEC_ID_OTF,
     AV_CODEC_ID_SMPTE_KLV,
+    AV_CODEC_ID_SMPTE_KLV_SYNC, //differenciate between synchronous and asynchronous KLV streams
     AV_CODEC_ID_DVD_NAV,
     AV_CODEC_ID_TIMED_ID3,
     AV_CODEC_ID_BIN_DATA,

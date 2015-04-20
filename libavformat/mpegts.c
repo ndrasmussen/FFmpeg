@@ -747,7 +747,7 @@ static const StreamType REGD_types[] = {
     { MKTAG('D', 'T', 'S', '3'), AVMEDIA_TYPE_AUDIO, AV_CODEC_ID_DTS   },
     { MKTAG('E', 'A', 'C', '3'), AVMEDIA_TYPE_AUDIO, AV_CODEC_ID_EAC3  },
     { MKTAG('H', 'E', 'V', 'C'), AVMEDIA_TYPE_VIDEO, AV_CODEC_ID_HEVC  },
-    { MKTAG('K', 'L', 'V', 'A'), AVMEDIA_TYPE_DATA,  AV_CODEC_ID_SMPTE_KLV },
+    { MKTAG('K', 'L', 'V', 'A'), AVMEDIA_TYPE_DATA,  AV_CODEC_ID_SMPTE_KLV }, // The async KLV uses a registration descriptor so this add will catch it.
     { MKTAG('I', 'D', '3', ' '), AVMEDIA_TYPE_DATA,  AV_CODEC_ID_TIMED_ID3 },
     { MKTAG('V', 'C', '-', '1'), AVMEDIA_TYPE_VIDEO, AV_CODEC_ID_VC1   },
     { MKTAG('O', 'p', 'u', 's'), AVMEDIA_TYPE_AUDIO, AV_CODEC_ID_OPUS  },
@@ -755,7 +755,7 @@ static const StreamType REGD_types[] = {
 };
 
 static const StreamType METADATA_types[] = {
-    { MKTAG('K','L','V','A'), AVMEDIA_TYPE_DATA, AV_CODEC_ID_SMPTE_KLV },
+    { MKTAG('K','L','V','A'), AVMEDIA_TYPE_DATA, AV_CODEC_ID_SMPTE_KLV_SYNC }, //The sync doesn't have the registration descriptor, but does use the metadata descriptor. Async also uses this, but will be caught in the REGD type because of the order of the checks.
     { MKTAG('I','D','3',' '), AVMEDIA_TYPE_DATA, AV_CODEC_ID_TIMED_ID3 },
     { 0 },
 };
@@ -1175,12 +1175,13 @@ skip:
                     p += sl_header_bytes;
                     buf_size -= sl_header_bytes;
                 }
-                if (pes->stream_type == 0x15 && buf_size >= 5) {
-                    /* skip metadata access unit header */
-                    pes->pes_header_size += 5;
-                    p += 5;
-                    buf_size -= 5;
-                }
+		// Don't remove the access unit header
+                //if (pes->stream_type == 0x15 && buf_size >= 5) {
+                //    /* skip metadata access unit header */
+                //    pes->pes_header_size += 5;
+                //    p += 5;
+                //    buf_size -= 5;
+                //}
                 if (   pes->ts->fix_teletext_pts
                     && (   pes->st->codecpar->codec_id == AV_CODEC_ID_DVB_TELETEXT
                         || pes->st->codecpar->codec_id == AV_CODEC_ID_DVB_SUBTITLE)
