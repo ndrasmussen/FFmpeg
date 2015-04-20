@@ -309,6 +309,9 @@ static int mpegts_write_pmt(AVFormatContext *s, MpegTSService *service)
         case AV_CODEC_ID_TRUEHD:
             stream_type = STREAM_TYPE_AUDIO_TRUEHD;
             break;
+        case AV_CODEC_ID_SMPTE_KLV_SYNC:
+            stream_type = STREAM_TYPE_DATA_KLV_SYNC;
+            break;
         default:
             stream_type = STREAM_TYPE_PRIVATE_DATA;
             break;
@@ -474,6 +477,36 @@ static int mpegts_write_pmt(AVFormatContext *s, MpegTSService *service)
                 *q++ = 'V';
                 *q++ = 'A';
             }
+            if (st->codec->codec_id == AV_CODEC_ID_SMPTE_KLV_SYNC || st->codec->codec_id == AV_CODEC_ID_SMPTE_KLV) {
+				//Begin metadata_descriptor
+                *q++ = 0x26;
+                *q++ = 0x09;
+				//begin metadata_application_format
+                *q++ = 0x01;
+                *q++ = 0x00;
+				//beging metadata_format
+                *q++ = 0xFF;
+                *q++ = 'K';
+                *q++ = 'L';
+                *q++ = 'V';
+                *q++ = 'A';
+                *q++ = 0x00;
+                *q++ = 0x0f;
+				//begin metadata_std_descriptor
+                *q++ = 0x27;
+                *q++ = 0x09;
+				//2 reserved bits and metadata_input_leak_rate
+                *q++ = 0xC0;
+                *q++ = 0x02;//0x00;
+                *q++ = 0x71;//0x00;//0x04;
+				//2 reserved bits followed by metadata_buffer_size
+                *q++ = 0xC0;
+                *q++ = 0x00;
+                *q++ = 0x02;//0x00
+				//2 reserved bits followed be metadata_output_leak_Rate
+                *q++ = 0xC0;
+                *q++ = 0x00;
+                *q++ = 0x00;			}
             break;
         }
 

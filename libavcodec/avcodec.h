@@ -532,6 +532,7 @@ enum AVCodecID {
     AV_CODEC_ID_IDF        = MKBETAG( 0 ,'I','D','F'),
     AV_CODEC_ID_OTF        = MKBETAG( 0 ,'O','T','F'),
     AV_CODEC_ID_SMPTE_KLV  = MKBETAG('K','L','V','A'),
+    AV_CODEC_ID_SMPTE_KLV_SYNC  = MKBETAG('K','L','V','S'), //The tag uses KLVA, but needs something different to be able to distinguish it from async streams.
     AV_CODEC_ID_DVD_NAV    = MKBETAG('D','N','A','V'),
     AV_CODEC_ID_TIMED_ID3  = MKBETAG('T','I','D','3'),
     AV_CODEC_ID_BIN_DATA   = MKBETAG('D','A','T','A'),

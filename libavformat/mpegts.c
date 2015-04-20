@@ -712,14 +712,14 @@ static const StreamType REGD_types[] = {
     { MKTAG('D', 'T', 'S', '2'), AVMEDIA_TYPE_AUDIO, AV_CODEC_ID_DTS   },
     { MKTAG('D', 'T', 'S', '3'), AVMEDIA_TYPE_AUDIO, AV_CODEC_ID_DTS   },
     { MKTAG('H', 'E', 'V', 'C'), AVMEDIA_TYPE_VIDEO, AV_CODEC_ID_HEVC  },
-    { MKTAG('K', 'L', 'V', 'A'), AVMEDIA_TYPE_DATA,  AV_CODEC_ID_SMPTE_KLV },
+    { MKTAG('K', 'L', 'V', 'A'), AVMEDIA_TYPE_DATA,  AV_CODEC_ID_SMPTE_KLV }, // The async KLV uses a registration descriptor so this add will catch it.
     { MKTAG('V', 'C', '-', '1'), AVMEDIA_TYPE_VIDEO, AV_CODEC_ID_VC1   },
     { MKTAG('O', 'p', 'u', 's'), AVMEDIA_TYPE_AUDIO, AV_CODEC_ID_OPUS  },
     { 0 },
 };
 
 static const StreamType METADATA_types[] = {
-    { MKTAG('K','L','V','A'), AVMEDIA_TYPE_DATA, AV_CODEC_ID_SMPTE_KLV },
+    { MKTAG('K','L','V','A'), AVMEDIA_TYPE_DATA, AV_CODEC_ID_SMPTE_KLV_SYNC }, //The sync doesn't have the registration descriptor, but does use the metadata descriptor. Async also uses this, but will be caught in the REGD type because of the order of the checks.
     { MKTAG('I','D','3',' '), AVMEDIA_TYPE_DATA, AV_CODEC_ID_TIMED_ID3 },
     { 0 },
 };
@@ -1103,12 +1103,14 @@ skip:
                     p += sl_header_bytes;
                     buf_size -= sl_header_bytes;
                 }
-                if (pes->stream_type == 0x15 && buf_size >= 5) {
-                    /* skip metadata access unit header */
-                    pes->pes_header_size += 5;
-                    p += 5;
-                    buf_size -= 5;
-                }
+				//TODO: Synchronous KLV streams have one or more metadata access unit headers within the stream
+				// The below check only removes the first one and thus causes problems if more than one exists.
+                //if (pes->stream_type == 0x15 && buf_size >= 5) {
+                //    /* skip metadata access unit header */
+                //    pes->pes_header_size += 5;
+                //    p += 5;
+                //    buf_size -= 5;
+                //}
                 if (pes->ts->fix_teletext_pts && pes->st->codec->codec_id == AV_CODEC_ID_DVB_TELETEXT) {
                     AVProgram *p = NULL;
                     while ((p = av_find_program_from_stream(pes->stream, p, pes->st->index))) {
