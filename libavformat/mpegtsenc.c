@@ -379,16 +379,14 @@ static int mpegts_write_pmt(AVFormatContext *s, MpegTSService *service)
         case AV_CODEC_ID_TRUEHD:
             stream_type = STREAM_TYPE_AUDIO_TRUEHD;
             break;
-<<<<<<< HEAD
         case AV_CODEC_ID_OPUS:
             stream_type = STREAM_TYPE_PRIVATE_DATA;
             break;
         case AV_CODEC_ID_TIMED_ID3:
             stream_type = STREAM_TYPE_METADATA;
-=======
+            break;
         case AV_CODEC_ID_SMPTE_KLV_SYNC:
-            stream_type = STREAM_TYPE_DATA_KLV_SYNC;
->>>>>>> c0ff18a... Applying patch found at https://ffmpeg.org/pipermail/ffmpeg-devel/2014-August/162041.html with a few additional tweaks that allows for reading async vs sync video correctly. Writting is also being patched, but has not yet been fully tested.
+            stream_type = STREAM_TYPE_METADATA;
             break;
         default:
             stream_type = STREAM_TYPE_PRIVATE_DATA;

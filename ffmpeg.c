@@ -23,6 +23,7 @@
  * multimedia converter based on the FFmpeg libraries
  */
 
+#include <winsock2.h>
 #include "config.h"
 #include <ctype.h>
 #include <string.h>
